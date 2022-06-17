@@ -1,0 +1,26 @@
+@isTest
+private class DailyLeadProcessorTest {
+
+    @isTest
+    public static void testDailyLeadProcessor(){
+
+        //Creating new 200 Leads and inserting them.
+        List<Lead> leads = new List<Lead>();
+        for (Integer x = 0; x < 200; x++) {
+            leads.add(new Lead(lastname='lead number ' + x, company='company number ' + x));
+        }
+        insert leads;
+
+        //Starting test. Putting in the schedule and running the DailyLeadProcessor execute method.
+        Test.startTest();
+        String jobId = System.schedule('DailyLeadProcessor', '0 0 12 * * ?', new DailyLeadProcessor());
+        Test.stopTest();
+
+        //Once the job has finished, retrieve all modified leads.
+        List<Lead> listResult = [SELECT ID, LeadSource FROM Lead where LeadSource = 'Dreamforce' LIMIT 200];
+
+        //Checking if the modified leads are the same size number that we created in the start of this method.
+        System.assertEquals(200, listResult.size());
+
+    }
+}

@@ -1,0 +1,17 @@
+global class DailyLeadProcessor implements Schedulable {
+
+    global void execute(SchedulableContext ctx) {
+
+        //Retrieving the 200 first leads where lead source is in blank.
+        List<Lead> leads = [SELECT ID, LeadSource FROM Lead where LeadSource = '' LIMIT 200];
+
+        //Setting the LeadSource field the 'Dreamforce' value.
+        for (Lead lead : leads) {
+            lead.LeadSource = 'Dreamforce';
+        }
+
+        //Updating all elements in the list.
+        update leads;
+    }
+
+}
